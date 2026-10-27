@@ -1,0 +1,9 @@
+#!/bin/sh
+# Runs inside the image once its packages are installed.
+set -eu
+# Fail the build, not the runner, if the nginx configuration is broken.
+nginx -t
+systemctl enable systemd-networkd.service systemd-resolved.service nginx.service
+# Each runner gets its own machine ID on first boot.
+: > /etc/machine-id
+rm -f /var/lib/dbus/machine-id
