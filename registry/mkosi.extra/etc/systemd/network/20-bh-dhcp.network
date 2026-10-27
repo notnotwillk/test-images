@@ -1,0 +1,7 @@
+# A runner with --network nat has one virtio network card, which QEMU's
+# user-mode network configures by DHCP.
+[Match]
+Name=en*
+
+[Network]
+DHCP=yes
