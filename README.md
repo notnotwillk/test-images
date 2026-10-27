@@ -8,6 +8,8 @@ control plane's image recipes.
 - `registry/` is the base plus an OCI registry on port 5000.
 - `nginx/` is the base plus nginx on port 80, serving a static page.
 - `toolbox/` is the base plus common command-line and build tools.
+- `potato/` is the potato server: the base plus nginx on port 80, configured only to serve the
+  Potato Operations Center page.
 
 Each directory is self-contained: the images carry their own copy of the base's settings.
 
