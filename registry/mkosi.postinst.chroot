@@ -1,7 +1,3 @@
 #!/bin/sh
-# Runs inside the image once its packages are installed.
 set -eu
-systemctl enable systemd-networkd.service systemd-resolved.service docker-registry.service
-# Each runner gets its own machine ID on first boot.
-: > /etc/machine-id
-rm -f /var/lib/dbus/machine-id
+systemctl enable docker-registry.service

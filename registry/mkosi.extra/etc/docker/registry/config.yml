@@ -1,5 +1,4 @@
-# docker-registry's configuration: plain HTTP on port 5000 inside the runner,
-# which only the adapter and its runners reach (as NAME.buzzherd), images on the runner's disk.
+# Plain HTTP on port 5000, with images on the runner's disk.
 version: 0.1
 log:
   fields:

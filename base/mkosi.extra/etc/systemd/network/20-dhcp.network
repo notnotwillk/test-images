@@ -1,0 +1,6 @@
+# A runner's network card is configured by DHCP.
+[Match]
+Name=en*
+
+[Network]
+DHCP=yes
