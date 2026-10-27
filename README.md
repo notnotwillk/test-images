@@ -4,31 +4,25 @@ Sample runner images, each an [mkosi](https://github.com/systemd/mkosi) project 
 control plane's image recipes.
 
 - `base/` is a bootable Debian 13: its kernel and initramfs, systemd, networkd, resolved and
-  cloud-init. The others include it.
+  cloud-init.
 - `registry/` is the base plus an OCI registry on port 5000.
 - `nginx/` is the base plus nginx on port 80, serving a static page.
 - `toolbox/` is the base plus common command-line and build tools.
 
+Each directory is self-contained: the images carry their own copy of the base's settings.
+
 ## Using one
 
-Add an image recipe (tool `mkosi`) with two git files, both from
-`https://github.com/notnotwillk/test-images.git` at ref `main`:
-
-| Path in the project | Path in the repository |
-| ------------------- | ---------------------- |
-| (empty)             | the image, such as `registry` |
-| `base`              | `base`                 |
-
-The image's `mkosi.conf` includes `base`, so both end up in the image. `base` alone is a recipe
-too, with one git file: path empty, path in the repository `base`.
+Add an image recipe (tool `mkosi`) with repository `https://github.com/notnotwillk/test-images.git`,
+ref `main`, and the image's directory, such as `registry`.
 
 ## Adding an image
 
-1. Make `NAME/mkosi.conf` with `[Config] Include=base`, and add packages under `[Content]
-   Packages=`. Don't change the kernel, init or cloud-init.
-2. Put files to copy into the image under `NAME/mkosi.extra/`, and enable services in an executable
+1. Copy `base/` to `NAME/`, and add packages to `[Content] Packages=` in `NAME/mkosi.conf`. Don't
+   change the kernel, init or cloud-init.
+2. Put files to copy into the image under `NAME/mkosi.extra/`, and enable services in
    `NAME/mkosi.postinst.chroot`, which runs inside the image after its packages are installed.
 
 A runner image needs systemd as init, cloud-init, and exactly one kernel and initramfs in `/boot`,
-which the adapter boots directly. That's why `base` sets `Bootable=no` and picks the kernel by
-architecture in `base/mkosi.conf.d/`.
+which the adapter boots directly. That's why each image sets `Bootable=no` and picks the kernel by
+architecture in `mkosi.conf.d/`.
