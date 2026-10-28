@@ -1,6 +1,7 @@
-# A runner's network card is configured by DHCP.
+# A runner's network card is configured by DHCP: en* under QEMU (PCI), eth0
+# under Firecracker (virtio-mmio).
 [Match]
-Name=en*
+Name=en* eth*
 
 [Network]
 DHCP=yes
