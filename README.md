@@ -1,7 +1,8 @@
 # Test images
 
 Sample runner images, each an [mkosi](https://github.com/systemd/mkosi) project built from git by a
-control plane's image recipes.
+control plane's image recipes, plus one [capstan](https://github.com/cloudius-systems/capstan)
+project for OSv.
 
 - `base/` is a bootable Debian 13: its kernel and initramfs, systemd, networkd, resolved and
   cloud-init.
@@ -10,6 +11,11 @@ control plane's image recipes.
 - `toolbox/` is the base plus common command-line and build tools.
 - `potato/` is the potato server: the base plus nginx on port 80, configured only to serve the
   Potato Operations Center page.
+- `micro-potato/` is the potato server as an [OSv](https://github.com/cloudius-systems/osv)
+  unikernel, a capstan package (tool `capstan`): a small C server, `potato.c`, serving the same page
+  on port 80. Build it with `make`, then `capstan package compose --pull-missing --fs rofs
+  micro-potato`, which adds OSv's loader from its v0.57.0 release. Runners can't boot OSv images
+  yet; `capstan run micro-potato` boots it under QEMU.
 
 Each directory is self-contained: the images carry their own copy of the base's settings.
 

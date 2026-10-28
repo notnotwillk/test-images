@@ -1,0 +1,8 @@
+# The potato server as an OSv unikernel: one process, no init, no Linux
+# kernel. Build it with `make`, then `capstan package compose --pull-missing
+# --fs rofs micro-potato`; this directory becomes the image's read-only root.
+# (capstan v1.0.0's default, ZFS, starts its builder VM with no CPUs and
+# fails.)
+name: micro-potato
+title: Micro potato server
+author: test-images

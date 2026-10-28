@@ -1,0 +1,5 @@
+# The image holds only the server and its page.
+/potato.c
+/Makefile
+/.gitignore
+/.capstanignore
