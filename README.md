@@ -1,8 +1,9 @@
 # Test images
 
 Sample runner images, each an [mkosi](https://github.com/systemd/mkosi) project built from git by a
-control plane's image recipes, plus one [capstan](https://github.com/cloudius-systems/capstan)
-project for OSv.
+control plane's image recipes, plus one Containerfile recipe that builds an
+[OSv](https://github.com/cloudius-systems/osv) unikernel with
+[capstan](https://github.com/cloudius-systems/capstan).
 
 - `base/` is a bootable Debian 13: its kernel and initramfs, systemd, networkd, resolved and
   cloud-init.
@@ -11,17 +12,18 @@ project for OSv.
 - `toolbox/` is the base plus common command-line and build tools.
 - `potato/` is the potato server: the base plus nginx on port 80, configured only to serve the
   Potato Operations Center page.
-- `micro-potato/` is the potato server as an [OSv](https://github.com/cloudius-systems/osv)
-  unikernel, a capstan package (tool `capstan`): a small C server, `potato.c`, serving the same page
-  on port 80. Build it with `make`, then `capstan package compose --pull-missing --fs rofs
-  micro-potato`, which adds OSv's loader from its v0.57.0 release. Runners can't boot OSv images
-  yet; `capstan run micro-potato` boots it under QEMU.
+- `micro-potato/` is the potato server as an OSv unikernel (tool `containerfile`): a small C
+  server, `potato.c`, serving the same page on port 80. Its `Containerfile` compiles it, composes it
+  with capstan v1.0.0 onto OSv v0.57.0's loader (every download checked against a pinned SHA-256),
+  and leaves `/osv/disk.qcow2` and `/osv/kernel.elf`, which runners boot under QEMU or Firecracker
+  on amd64 adapters. The capstan package itself is `meta/`, so `make` then
+  `capstan package compose --pull-missing --fs rofs micro-potato` builds it by hand too.
 
 Each directory is self-contained: the images carry their own copy of the base's settings.
 
 ## Using one
 
-Add an image recipe (tool `mkosi`) with repository `https://github.com/notnotwillk/test-images.git`,
+Add an image recipe (tool `mkosi`, or `containerfile` for `micro-potato`) with repository `https://github.com/notnotwillk/test-images.git`,
 ref `main`, and the image's directory, such as `registry`.
 
 ## Adding an image

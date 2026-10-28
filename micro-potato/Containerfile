@@ -1,0 +1,37 @@
+# micro-potato as a Buzz Herd containerfile recipe: build the server, compose
+# it into an OSv image with capstan, and leave just that image in /osv/.
+FROM debian:13 AS build
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+       build-essential ca-certificates curl qemu-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# capstan v1.0.0 and OSv v0.57.0's loader, Firecracker kernel and bootstrap
+# package, each checked against its SHA-256. capstan finds them already in its
+# repository, so it never pulls anything itself.
+ENV CAPSTAN_ROOT=/capstan
+ARG OSV=https://github.com/cloudius-systems/osv/releases/download/v0.57.0
+RUN set -eu; \
+    get() { curl -fsSL -o "$2" "$1"; echo "$3  $2" | sha256sum -c -; }; \
+    mkdir -p /capstan/repository/osv-loader /capstan/packages; \
+    get https://github.com/cloudius-systems/capstan/releases/download/v1.0.0/capstan /usr/local/bin/capstan \
+        7461fbb1a5ce795e4008d7884dbdf6ff437971c71a8e8d266dd2addedeadab3a; \
+    chmod +x /usr/local/bin/capstan; \
+    get $OSV/osv-loader.qemu.x86_64 /capstan/repository/osv-loader/osv-loader.qemu \
+        511388a052f8986b2259e832f9e3882a320ec718002e3ba536030c9b2ae32db2; \
+    get $OSV/osv-loader.elf.x86_64.gz /kernel.elf.gz \
+        9251f15f45f3e271d7c059025d922dc20dafc599e793692ab99c50a0db91eab0; \
+    gunzip /kernel.elf.gz; \
+    get $OSV/osv.bootstrap.mpm.x86_64 /capstan/packages/osv.bootstrap.mpm \
+        2b76fafe0078192665212780cd96d981e3d15cae3f03d5ead640ac2169fb7e50; \
+    get $OSV/osv.bootstrap.yaml /capstan/packages/osv.bootstrap.yaml \
+        6f924b93561f8076870293e5f347c40c7185a71a4ce0f09a343193f391346fd5
+
+WORKDIR /src
+COPY . .
+# A read-only root (ROFS): capstan v1.0.0's default, ZFS, fails to build.
+RUN make && capstan package compose --fs rofs micro-potato
+
+FROM scratch
+COPY --from=build /capstan/repository/micro-potato/micro-potato.qemu /osv/disk.qcow2
+COPY --from=build /kernel.elf /osv/kernel.elf
