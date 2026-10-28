@@ -1,0 +1,6 @@
+# OSv starts the server directly as its one process.
+runtime: native
+config_set:
+  default:
+    bootcmd: /potato
+config_set_default: default
