@@ -1,0 +1,4 @@
+# The share, as the NFSv4 root (clients mount HOST:/). sec=sys trusts the
+# client's user IDs, and no_root_squash lets its root write as root: for tests
+# and private networks only.
+/srv/nfs *(rw,sync,no_subtree_check,fsid=0,no_root_squash)

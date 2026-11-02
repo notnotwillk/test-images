@@ -1,0 +1,2 @@
+This is the NFS share of a test-images nfs-server runner. Runners mount it with
+--volume nfs://NAME.buzzherd/:/PATH, and can write here.
