@@ -1,0 +1,6 @@
+bundle: 1
+name: bootstrap
+description: The basic services for a new adapter
+bundles:
+  - git: { path: bundles/knowledge-base/bundle.yaml }
+  - git: { path: bundles/potato/bundle.yaml }

@@ -30,6 +30,11 @@ control plane's image recipes, plus one Containerfile recipe that builds an
 
 Each directory is self-contained: the images carry their own copy of the base's settings.
 
+## Bundles
+
+[`bundles/`](bundles/README.md) sets images up together, from one file: a recipe, a runner and an
+exposure each. `bootstrap` brings in the knowledge base and the potato server.
+
 ## Using one
 
 Each image's directory has a README with the `bh cp` commands to add it to a control plane, build

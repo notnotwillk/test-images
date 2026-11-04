@@ -1,0 +1,19 @@
+bundle: 1
+name: potato
+description: The potato server, on a runner, exposed on the mesh
+params:
+  runner: { default: potato, description: The runner's name }
+  memory: { default: 512M }
+  exposure: { default: potato, description: "Its name on the mesh, which must be unique there" }
+recipes:
+  - name: potato
+    tool: mkosi
+    git: { path: potato }
+profiles:
+  - name: ${runner}
+    image: recipe:potato
+    memory: ${memory}
+runners:
+  - { name: "${runner}", profile: "${runner}" }
+exposures:
+  - { name: "${exposure}", runner: "${runner}", port: 80 }
