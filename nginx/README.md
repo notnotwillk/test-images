@@ -7,11 +7,12 @@ The base plus nginx on port 80, serving a static page. It builds for amd64 and a
 This assumes a working adapter, and that `bh config get default-control-plane` prints your control
 plane.
 
-1. Sign this CLI in, and find your adapter's name, which replaces `ADAPTER` below:
+1. Sign this CLI in, find your adapter's name, and put it in `ADAPTER` for the commands below:
 
    ```sh
    bh auth login
    bh cp adapter list
+   export ADAPTER=NAME
    ```
 
 2. Add the image recipe:
@@ -25,7 +26,7 @@ plane.
    `builds` shows `ready` when it's done:
 
    ```sh
-   bh cp recipe build nginx --adapter ADAPTER
+   bh cp recipe build nginx --adapter "$ADAPTER"
    bh cp recipe builds
    ```
 
@@ -42,9 +43,9 @@ plane.
    once it has started, and `console` shows it booting:
 
    ```sh
-   bh cp runner create nginx --profile nginx --adapter ADAPTER
+   bh cp runner create nginx --profile nginx --adapter "$ADAPTER"
    bh cp runner list
-   bh cp runner console nginx --adapter ADAPTER
+   bh cp runner console nginx --adapter "$ADAPTER"
    ```
 
 6. Publish its port 80 on the mesh. Run this on the adapter's host, or use **Expose…** on the
@@ -61,8 +62,8 @@ plane.
 ## Remove it
 
 ```sh
-bh cp runner stop nginx --adapter ADAPTER
-bh cp runner delete nginx --adapter ADAPTER
+bh cp runner stop nginx --adapter "$ADAPTER"
+bh cp runner delete nginx --adapter "$ADAPTER"
 bh cp profile delete nginx
 bh cp recipe delete nginx
 ```

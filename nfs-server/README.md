@@ -9,11 +9,12 @@ root, so clients mount `HOST:/`. It builds for amd64 and arm64 adapters. It trus
 This assumes a working adapter, and that `bh config get default-control-plane` prints your control
 plane.
 
-1. Sign this CLI in, and find your adapter's name, which replaces `ADAPTER` below:
+1. Sign this CLI in, find your adapter's name, and put it in `ADAPTER` for the commands below:
 
    ```sh
    bh auth login
    bh cp adapter list
+   export ADAPTER=NAME
    ```
 
 2. Add the image recipe:
@@ -27,7 +28,7 @@ plane.
    `builds` shows `ready` when it's done:
 
    ```sh
-   bh cp recipe build nfs-server --adapter ADAPTER
+   bh cp recipe build nfs-server --adapter "$ADAPTER"
    bh cp recipe builds
    ```
 
@@ -44,9 +45,9 @@ plane.
    once it has started, and `console` shows it booting:
 
    ```sh
-   bh cp runner create nfs-server --profile nfs-server --adapter ADAPTER
+   bh cp runner create nfs-server --profile nfs-server --adapter "$ADAPTER"
    bh cp runner list
-   bh cp runner console nfs-server --adapter ADAPTER
+   bh cp runner console nfs-server --adapter "$ADAPTER"
    ```
 
 6. Mount it from a runner on the same adapter. The image that runner boots needs an NFS client
@@ -55,7 +56,7 @@ plane.
 
    ```sh
    bh cp profile set nfs-client --image recipe:nfs-server --volume nfs://nfs-server.buzzherd/:/mnt/nfs
-   bh cp runner create nfs-client --profile nfs-client --adapter ADAPTER
+   bh cp runner create nfs-client --profile nfs-client --adapter "$ADAPTER"
    ```
 
 7. To mount it from other adapters, publish port 2049 on the mesh. Run this on the adapter's host,
@@ -71,11 +72,11 @@ plane.
 ## Remove it
 
 ```sh
-bh cp runner stop nfs-client --adapter ADAPTER
-bh cp runner delete nfs-client --adapter ADAPTER
+bh cp runner stop nfs-client --adapter "$ADAPTER"
+bh cp runner delete nfs-client --adapter "$ADAPTER"
 bh cp profile delete nfs-client
-bh cp runner stop nfs-server --adapter ADAPTER
-bh cp runner delete nfs-server --adapter ADAPTER
+bh cp runner stop nfs-server --adapter "$ADAPTER"
+bh cp runner delete nfs-server --adapter "$ADAPTER"
 bh cp profile delete nfs-server
 bh cp recipe delete nfs-server
 ```

@@ -9,11 +9,12 @@ reach it can change what it holds. Keep it to tests and private networks.
 This assumes a working adapter, and that `bh config get default-control-plane` prints your control
 plane.
 
-1. Sign this CLI in, and find your adapter's name, which replaces `ADAPTER` below:
+1. Sign this CLI in, find your adapter's name, and put it in `ADAPTER` for the commands below:
 
    ```sh
    bh auth login
    bh cp adapter list
+   export ADAPTER=NAME
    ```
 
 2. Add the image recipe:
@@ -27,7 +28,7 @@ plane.
    `builds` shows `ready` when it's done:
 
    ```sh
-   bh cp recipe build registry --adapter ADAPTER
+   bh cp recipe build registry --adapter "$ADAPTER"
    bh cp recipe builds
    ```
 
@@ -44,9 +45,9 @@ plane.
    once it has started, and `console` shows it booting:
 
    ```sh
-   bh cp runner create registry --profile registry --adapter ADAPTER
+   bh cp runner create registry --profile registry --adapter "$ADAPTER"
    bh cp runner list
-   bh cp runner console registry --adapter ADAPTER
+   bh cp runner console registry --adapter "$ADAPTER"
    ```
 
 6. Publish its port 5000 on the mesh. Run this on the adapter's host, or use **Expose…** on the
@@ -70,10 +71,10 @@ plane.
 ## Remove it
 
 ```sh
-bh cp runner stop r2 --adapter ADAPTER
-bh cp runner delete r2 --adapter ADAPTER
-bh cp runner stop registry --adapter ADAPTER
-bh cp runner delete registry --adapter ADAPTER
+bh cp runner stop r2 --adapter "$ADAPTER"
+bh cp runner delete r2 --adapter "$ADAPTER"
+bh cp runner stop registry --adapter "$ADAPTER"
+bh cp runner delete registry --adapter "$ADAPTER"
 bh cp profile delete registry
 bh cp recipe delete registry
 ```

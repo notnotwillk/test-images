@@ -8,11 +8,12 @@ the OpenSSH client and `vim-tiny`. It builds for amd64 and arm64 adapters.
 This assumes a working adapter, and that `bh config get default-control-plane` prints your control
 plane.
 
-1. Sign this CLI in, and find your adapter's name, which replaces `ADAPTER` below:
+1. Sign this CLI in, find your adapter's name, and put it in `ADAPTER` for the commands below:
 
    ```sh
    bh auth login
    bh cp adapter list
+   export ADAPTER=NAME
    ```
 
 2. Add the image recipe:
@@ -26,7 +27,7 @@ plane.
    `builds` shows `ready` when it's done:
 
    ```sh
-   bh cp recipe build toolbox --adapter ADAPTER
+   bh cp recipe build toolbox --adapter "$ADAPTER"
    bh cp recipe builds
    ```
 
@@ -43,9 +44,9 @@ plane.
    once it has started, and `console` shows it booting:
 
    ```sh
-   bh cp runner create toolbox --profile toolbox --adapter ADAPTER
+   bh cp runner create toolbox --profile toolbox --adapter "$ADAPTER"
    bh cp runner list
-   bh cp runner console toolbox --adapter ADAPTER
+   bh cp runner console toolbox --adapter "$ADAPTER"
    ```
 
 6. It has no service and no SSH server, so give it work as cloud-init user data. To run a script at
@@ -60,8 +61,8 @@ plane.
 ## Remove it
 
 ```sh
-bh cp runner stop toolbox --adapter ADAPTER
-bh cp runner delete toolbox --adapter ADAPTER
+bh cp runner stop toolbox --adapter "$ADAPTER"
+bh cp runner delete toolbox --adapter "$ADAPTER"
 bh cp profile delete toolbox
 bh cp recipe delete toolbox
 ```
