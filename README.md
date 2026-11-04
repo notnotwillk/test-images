@@ -30,8 +30,8 @@ Each directory is self-contained: the images carry their own copy of the base's 
 
 ## Using one
 
-Add an image recipe (tool `mkosi`, or `containerfile` for `micro-potato`) with repository `https://github.com/notnotwillk/test-images.git`,
-ref `main`, and the image's directory, such as `registry`.
+Each image's directory has a README with the `bh cp` commands to add it to a control plane, build
+it, and run it.
 
 ## Adding an image
 
