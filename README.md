@@ -17,6 +17,8 @@ control plane's image recipes, plus one Containerfile recipe that builds an
   `nfs://SHARE.mesh/`. The image they run needs an NFS client (`nfs-common`). It trusts clients'
   user IDs (`sec=sys`) and lets their root write as root, so keep it to tests and private
   networks.
+- `knowledge-base/` is the base plus nginx on port 80, serving a knowledge base about using a
+  control plane, including volumes. Its pages are Markdown, rendered when the image is built.
 - `potato/` is the potato server: the base plus nginx on port 80, configured only to serve the
   Potato Operations Center page.
 - `micro-potato/` is the potato server as an OSv unikernel (tool `containerfile`): a small C
