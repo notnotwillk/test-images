@@ -4,6 +4,7 @@ description: Hermes Agent, on a runner, exposed on the mesh. It needs an OpenRou
 params:
   runner: { default: hermes, description: The runner's name }
   memory: { default: 2G }
+  vmm: { default: firecracker, description: "firecracker needs KVM on the adapter; qemu runs without it" }
   exposure: { default: hermes, description: "Its name on the mesh, which must be unique there" }
 recipes:
   - name: hermes-openrouter
@@ -13,6 +14,7 @@ profiles:
   - name: ${runner}
     image: recipe:hermes-openrouter
     memory: ${memory}
+    vmm: ${vmm}
 runners:
   - { name: "${runner}", profile: "${runner}" }
 exposures:
