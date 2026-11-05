@@ -5,9 +5,10 @@ exposures and applications to make, and which other bundles it needs. These buil
 
 | Bundle | What it sets up |
 | --- | --- |
-| [`bootstrap`](bootstrap/bundle.yaml) | Both of the others. It has no entities of its own |
+| [`bootstrap`](bootstrap/bundle.yaml) | All of the others. It has no entities of its own |
 | [`knowledge-base`](knowledge-base/bundle.yaml) | The [knowledge base](../knowledge-base/README.md), exposed as `knowledge-base`, and an application to open it |
 | [`potato`](potato/bundle.yaml) | The [potato server](../potato/README.md), exposed as `potato`, and an application to open it |
+| [`hermes-openrouter`](hermes-openrouter/bundle.yaml) | [Hermes with OpenRouter](../hermes-openrouter/README.md), exposed as `hermes`, and an application to open it. It needs an OpenRouter key, and a slow first build |
 
 Their recipes use this repository at the bundle's own commit, so one commit pins everything. They're kept
 here rather than in each image's directory, because a file in that directory would become part of the
@@ -49,7 +50,7 @@ application takes its name from its exposure.
 An exposure's name is unique across the mesh, so a second adapter needs its own:
 
 ```sh
-bh cp bundle install bootstrap --adapter "$OTHER_ADAPTER" --set potato.exposure=potato-2 --set knowledge-base.exposure=knowledge-base-2
+bh cp bundle install bootstrap --adapter "$OTHER_ADAPTER" --set potato.exposure=potato-2 --set knowledge-base.exposure=knowledge-base-2 --set hermes-openrouter.exposure=hermes-2
 ```
 
 Uninstalling removes what it made, and the dependencies nothing else needs:

@@ -1,0 +1,13 @@
+[Unit]
+Description=Give Hermes its OpenRouter key once this runner is granted it
+# cloud-init installs bh-secret, and names the runner.
+After=cloud-final.service nginx.service
+Wants=nginx.service
+
+[Service]
+ExecStart=/usr/local/sbin/hermes-gate
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
