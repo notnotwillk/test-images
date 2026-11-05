@@ -17,3 +17,5 @@ runners:
   - { name: "${runner}", profile: "${runner}" }
 exposures:
   - { name: "${exposure}", runner: "${runner}", port: 80 }
+applications:
+  - { name: "${exposure}", title: Knowledge base, exposure: "${exposure}" }
