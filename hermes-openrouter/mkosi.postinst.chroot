@@ -1,0 +1,19 @@
+#!/bin/sh
+# Runs inside the image once its packages and mkosi.extra are in place.
+set -eu
+hermes() { runuser -u hermes -- env HOME=/var/lib/hermes /var/lib/hermes/.local/bin/hermes "$@"; }
+# Talk to OpenRouter. The key comes at runtime (hermes-gate), not from here.
+hermes config set model.provider openrouter
+hermes config set model.default openrouter/auto
+# The skills this image starts with.
+cp -r /usr/share/hermes-image/skills/. /var/lib/hermes/.hermes/skills/
+chown -R hermes:hermes /var/lib/hermes/.hermes/skills
+# Fail the build, not the runner, if Hermes or nginx can't run.
+hermes --version
+ln -s setup.conf /etc/nginx/hermes/active.conf
+sed 's/@RUNNER@/hermes/g' /usr/share/hermes-image/setup.html > /var/www/hermes/setup.html
+nginx -t
+systemctl enable systemd-networkd.service systemd-resolved.service nginx.service hermes-gate.service
+# Each runner gets its own machine ID on first boot.
+: > /etc/machine-id
+rm -f /var/lib/dbus/machine-id

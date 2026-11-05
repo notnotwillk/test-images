@@ -21,6 +21,8 @@ control plane's image recipes, plus one Containerfile recipe that builds an
   control plane, including volumes. Its pages are Markdown, rendered when the image is built.
 - `potato/` is the potato server: the base plus nginx on port 80, configured only to serve the
   Potato Operations Center page.
+- `hermes-openrouter/` is [Hermes Agent](hermes-openrouter/README.md) with its web dashboard, using an OpenRouter
+  key from a secret. Until it has one, it serves a page saying how to give it one.
 - `micro-potato/` is the potato server as an OSv unikernel (tool `containerfile`): a small C
   server, `potato.c`, serving the same page on port 80. Its `Containerfile` compiles it, composes it
   with capstan v1.0.0 onto OSv v0.57.0's loader (every download checked against a pinned SHA-256),
@@ -33,7 +35,7 @@ Each directory is self-contained: the images carry their own copy of the base's 
 ## Bundles
 
 [`bundles/`](bundles/README.md) sets images up together, from one file: a recipe, a runner and an
-exposure each. `bootstrap` brings in the knowledge base and the potato server.
+exposure each. `bootstrap` brings in the knowledge base, the potato server and Hermes.
 
 ## Using one
 

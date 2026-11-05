@@ -1,0 +1,15 @@
+[Unit]
+Description=Hermes Agent's web dashboard, on loopback behind nginx
+# Started and stopped by hermes-gate, which writes its key.
+After=network-online.target
+ConditionPathExists=/run/hermes/env
+
+[Service]
+User=hermes
+Group=hermes
+WorkingDirectory=/var/lib/hermes
+Environment=HOME=/var/lib/hermes
+EnvironmentFile=/run/hermes/env
+ExecStart=/var/lib/hermes/.local/bin/hermes dashboard --host 127.0.0.1 --port 9119 --no-open
+Restart=on-failure
+RestartSec=5

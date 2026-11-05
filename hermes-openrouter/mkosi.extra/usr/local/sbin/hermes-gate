@@ -1,0 +1,73 @@
+#!/bin/sh
+# Gives Hermes its OpenRouter key, once the runner is granted it, and keeps nginx
+# on the right site: the setup page without a key, and Hermes with one. Runs as
+# root because only root can read secrets. It never prints the key.
+#
+# Polling uses `bh-secret report`, which shows a secret's revision but not its
+# value, so the value is only read (and audited) when it changes. When the adapter
+# doesn't answer, nothing changes.
+set -u
+name=openrouter-api-key
+env_file=/run/hermes/env
+
+site() {
+  ln -sfn "$1.conf" /etc/nginx/hermes/active.conf
+  systemctl try-reload-or-restart nginx.service
+}
+
+no_key() {
+  systemctl stop hermes-dashboard.service
+  rm -f "$env_file"
+  site setup
+}
+
+# What the report says about the key: NAME@REVISION, or nothing if not granted.
+granted() {
+  report=$(bh-secret report 2>/dev/null) || return 1
+  for word in $report; do
+    case $word in
+      "$name"|"$name"@*|"$name"=*) printf %s "$word"; return 0 ;;
+    esac
+  done
+  return 0
+}
+
+# The setup page names this runner, which cloud-init may not have named yet.
+name_page() {
+  runner=$(hostname)
+  [ "$runner" != "${named:-}" ] || return 0
+  sed "s/@RUNNER@/$runner/g" /usr/share/hermes-image/setup.html > /var/www/hermes/setup.html
+  named=$runner
+}
+
+install -d -m 0750 -o root -g hermes /run/hermes
+no_key
+applied=
+while :; do
+  name_page
+  if current=$(granted) && [ "$current" != "$applied" ]; then
+    if [ -z "$current" ]; then
+      echo "hermes-gate: $name isn't granted; showing the setup page"
+      no_key
+      applied=
+    elif value=$(bh-secret get "$name" 2>/dev/null); then
+      case $value in
+        ''|*[!A-Za-z0-9_-]*)
+          echo "hermes-gate: $name doesn't look like an API key; showing the setup page"
+          no_key
+          ;;
+        *)
+          echo "hermes-gate: $name changed; starting Hermes"
+          (umask 027; printf 'OPENROUTER_API_KEY=%s\n' "$value" > "$env_file.new")
+          chgrp hermes "$env_file.new"
+          mv -f "$env_file.new" "$env_file"
+          systemctl restart hermes-dashboard.service
+          site proxy
+          ;;
+      esac
+      unset value
+      applied=$current
+    fi
+  fi
+  sleep 10
+done

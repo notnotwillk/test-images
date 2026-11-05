@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Set up Hermes</title>
+    <style>
+      body { font: 16px/1.5 system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; color: #222; }
+      pre { background: #f2f2f2; padding: .75rem; overflow-x: auto; border-radius: 4px; font-size: 14px; }
+      code { font-size: .95em; }
+      @media (prefers-color-scheme: dark) { body { background: #1b1b1b; color: #ddd; } pre { background: #2a2a2a; } a { color: #8ab4f8; } }
+    </style>
+  </head>
+  <body>
+    <h1>Hermes needs an OpenRouter key</h1>
+    <p>Hermes is installed on this runner, <code>@RUNNER@</code>, but won't start until the runner is granted the
+      <code>openrouter-api-key</code> secret.</p>
+    <h2>1. Get a key from OpenRouter</h2>
+    <ol>
+      <li>Sign in at <a href="https://openrouter.ai/">openrouter.ai</a>.</li>
+      <li>Add some credit on <a href="https://openrouter.ai/settings/credits">the Credits page</a>.</li>
+      <li>Create a key on <a href="https://openrouter.ai/settings/keys">the Keys page</a>, and copy it. It starts
+        <code>sk-or-</code>.</li>
+    </ol>
+    <h2>2. Save it as a secret</h2>
+    <p>On the host of this runner's adapter, signed in with <code>bh auth login</code>. This asks for the key, so it
+      stays out of your shell's history:</p>
+    <pre>printf 'Key: '; read -rs KEY; echo; printf %s "$KEY" | bh host adapter secret set openrouter-api-key; unset KEY</pre>
+    <h2>3. Grant it to this runner</h2>
+    <pre>bh host adapter secret grant openrouter-api-key --runner @RUNNER@</pre>
+    <p>You can do steps 2 and 3 on the control plane's <strong>Secrets</strong> page instead.</p>
+    <p>Hermes starts within about 10 seconds of the grant, and this page changes to it by itself.</p>
+    <script>
+      setInterval(async () => {
+        try {
+          const response = await fetch(location.href, { cache: "no-store" });
+          if (!response.headers.has("x-hermes-setup")) location.reload();
+        } catch {}
+      }, 5000);
+    </script>
+  </body>
+</html>

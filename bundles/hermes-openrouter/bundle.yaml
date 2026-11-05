@@ -1,0 +1,21 @@
+bundle: 1
+name: hermes-openrouter
+description: Hermes Agent, on a runner, exposed on the mesh. It needs an OpenRouter key, and says how to give it one
+params:
+  runner: { default: hermes, description: The runner's name }
+  memory: { default: 2G }
+  exposure: { default: hermes, description: "Its name on the mesh, which must be unique there" }
+recipes:
+  - name: hermes-openrouter
+    tool: mkosi
+    git: { path: hermes-openrouter }
+profiles:
+  - name: ${runner}
+    image: recipe:hermes-openrouter
+    memory: ${memory}
+runners:
+  - { name: "${runner}", profile: "${runner}" }
+exposures:
+  - { name: "${exposure}", runner: "${runner}", port: 80 }
+applications:
+  - { name: "${exposure}", title: Hermes, exposure: "${exposure}" }

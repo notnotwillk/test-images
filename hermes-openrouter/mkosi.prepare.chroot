@@ -1,0 +1,13 @@
+#!/bin/sh
+# Installs Hermes Agent the way it publishes (install.sh), as the user it runs as.
+# It's a prepare script because that's when mkosi offers the network. v0.22.7:
+set -eu
+commit=b200f5bc60e31588ba2cb60e288029c4a54ba5fa
+# mkosi runs this for the final image and for any build overlay.
+[ "${1:-final}" = final ] || exit 0
+useradd --system --create-home --home-dir /var/lib/hermes --shell /bin/bash hermes
+curl -fsSLo /tmp/hermes-install.sh https://hermes-agent.nousresearch.com/install.sh
+# No browser or computer-use tools: this is a barebones agent.
+runuser -u hermes -- env HOME=/var/lib/hermes CI=1 bash /tmp/hermes-install.sh \
+  --commit "$commit" --non-interactive --skip-browser --skip-computer-use
+rm -f /tmp/hermes-install.sh
