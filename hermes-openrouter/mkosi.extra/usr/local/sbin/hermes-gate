@@ -32,11 +32,19 @@ granted() {
   return 0
 }
 
+# The setup page names this runner, which cloud-init may not have named yet.
+name_page() {
+  runner=$(hostname)
+  [ "$runner" != "${named:-}" ] || return 0
+  sed "s/@RUNNER@/$runner/g" /usr/share/hermes-image/setup.html > /var/www/hermes/setup.html
+  named=$runner
+}
+
 install -d -m 0750 -o root -g hermes /run/hermes
-sed "s/@RUNNER@/$(hostname)/g" /usr/share/hermes-image/setup.html > /var/www/hermes/setup.html
 no_key
 applied=
 while :; do
+  name_page
   if current=$(granted) && [ "$current" != "$applied" ]; then
     if [ -z "$current" ]; then
       echo "hermes-gate: $name isn't granted; showing the setup page"

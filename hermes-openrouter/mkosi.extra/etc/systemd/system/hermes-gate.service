@@ -1,7 +1,9 @@
 [Unit]
 Description=Give Hermes its OpenRouter key once this runner is granted it
-# cloud-init installs bh-secret, and names the runner.
-After=cloud-final.service nginx.service
+# Not after cloud-final, which runs after multi-user.target: that would be an
+# ordering cycle. cloud-init installs bh-secret and names the runner meanwhile, and
+# hermes-gate keeps trying until it has.
+After=nginx.service
 Wants=nginx.service
 
 [Service]
