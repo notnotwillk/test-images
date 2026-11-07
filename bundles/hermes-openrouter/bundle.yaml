@@ -21,3 +21,5 @@ exposures:
   - { name: "${exposure}", runner: "${runner}", port: 80 }
 applications:
   - { name: "${exposure}", title: Hermes, exposure: "${exposure}" }
+services:
+  - { name: "${runner}", runner: "${runner}" }
